@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "560371901013",
+    "project_id": "secondflutter-flutter-project",
+    "storage_bucket": "secondflutter-flutter-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560371901013:android:3583af4345bda78051eadc",
+        "android_client_info": {
+          "package_name": "com.carol.secondflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "560371901013-qes6uhb6bt3aut8am8m1itb3htughjl6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbl_hf6Yx0OzPuamtujukUffL65Vub2mE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "560371901013-qes6uhb6bt3aut8am8m1itb3htughjl6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
