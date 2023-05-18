@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:secondflutter/firebase_options.dart';
 import 'package:secondflutter/services/auth_user.dart';
 import 'package:secondflutter/services/auth/auth_exceptions.dart';
 import 'package:secondflutter/services/auth/auth_provider.dart';
@@ -93,5 +95,12 @@ class FirebaseAuthProvider implements AuthProvider {
     } else {
       throw UserNotLoggedin();
     }
+  }
+
+  @override
+  Future<void> initialize() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 }

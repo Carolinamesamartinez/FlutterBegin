@@ -1,4 +1,5 @@
 import 'package:secondflutter/services/auth/auth_provider.dart';
+import 'package:secondflutter/services/auth/firebase_auth_provider.dart';
 import 'package:secondflutter/services/auth_user.dart';
 
 class AuthService implements AuthProvider {
@@ -6,6 +7,7 @@ class AuthService implements AuthProvider {
 
   const AuthService(this.provider);
 
+  factory AuthService.firebase() => AuthService(FirebaseAuthProvider());
   @override
   Future<AuthUser> createUser({
     required String email,
@@ -34,4 +36,7 @@ class AuthService implements AuthProvider {
 
   @override
   Future<void> sendEmailVerification() => provider.sendEmailVerification();
+
+  @override
+  Future<void> initialize() => provider.initialize();
 }
