@@ -1,18 +1,120 @@
 import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
+import 'package:secondflutter/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
 
-class DatabaseAlreadyOpenException implements Exception {}
-
-class UnableToCreateDocumentsDirectory implements Exception {}
-
-class DatabaseIsNotOpen implements Exception {}
-
 class NotesService {
   Database? _db;
+
+  Future<void> deleteUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+    final deletedCount = await db.delete(
+      userTable,
+      where: 'email =?',
+      whereArgs: [email.toLowerCase()],
+    );
+
+    if (deletedCount == 0) {
+      throw CouldNotDeleteUser();
+    }
+  }
+
+  Future<DatabaseUser> createUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+    final results = await db.query(userTable,
+        limit: 1, where: 'email = ?', whereArgs: [email.toLowerCase()]);
+    if (results.isNotEmpty) {
+      throw UserAlreadyExists();
+    }
+    final userId = await db.insert(userTable, {
+      emailColumn: email.toLowerCase(),
+    });
+
+    return DatabaseUser(id: userId, email: email);
+  }
+
+  Future<DatabaseUser> getUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+    final results = await db.query(userTable,
+        limit: 1, where: 'email = ?', whereArgs: [email.toLowerCase()]);
+    if (results.isEmpty) {
+      throw CouldNotFindUser();
+    } else {
+      return DatabaseUser.fromRow(results.first);
+    }
+  }
+
+  Future<DatabaseNotes> createnote({required DatabaseUser owner}) async {
+    final db = _getDatabaseOrThrow();
+    final dbUser = await getUser(email: owner.email);
+    if (dbUser != owner) {
+      throw CouldNotFindUser();
+    }
+    const text = '';
+    final noteId = await db.insert(noteTable,
+        {userIdColumn: owner.id, textColumn: text, isSyncedWithCloudColumn: 1});
+
+    final note = DatabaseNotes(
+      id: noteId,
+      userId: owner.id,
+      text: text,
+      isSyncedWithCloud: true,
+    );
+    return note;
+  }
+
+  Future<void> deleteNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final deletedCount = await db.delete(
+      noteTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (deletedCount == 0) {
+      throw CouldNotDeleteNote();
+    }
+  }
+
+  Future<int> deleteAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    return await db.delete(noteTable);
+  }
+
+  Future<DatabaseNotes> getNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final results =
+        await db.query(noteTable, limit: 1, where: 'id = ?', whereArgs: [id]);
+    if (results.isEmpty) {
+      throw CouldNotFindNote();
+    } else {
+      return DatabaseNotes.fromRow(results.first);
+    }
+  }
+
+  Future<Iterable<DatabaseNotes>> getAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    final notes = await db.query(noteTable);
+    return notes.map((noteRow) => DatabaseNotes.fromRow(noteRow));
+  }
+
+  Future<DatabaseNotes> updateNote(
+      {required DatabaseNotes note, required String text}) async {
+    final db = _getDatabaseOrThrow();
+    await getNote(id: note.id);
+    final updatesCount = await db
+        .update(noteTable, {textColumn: text, isSyncedWithCloudColumn: 0});
+
+    if (updatesCount == 0) {
+      throw CouldNotUpdateNote();
+    } else {
+      return await getNote(id: note.id);
+    }
+  }
+
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
@@ -57,7 +159,7 @@ class DatabaseUser {
   final String email;
 
   const DatabaseUser({required this.id, required this.email});
-  DatabaseUser.fromRow(Map<String, Object> map)
+  DatabaseUser.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
         email = map[emailColumn] as String;
   @override
@@ -82,7 +184,7 @@ class DatabaseNotes {
       required this.text,
       required this.isSyncedWithCloud});
 
-  DatabaseNotes.fromRow(Map<String, Object> map)
+  DatabaseNotes.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
         userId = map[userIdColumn] as int,
         text = map[textColumn] as String,
