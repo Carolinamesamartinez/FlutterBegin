@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:secondflutter/constants/routes.dart';
 import 'package:secondflutter/services/auth/auth_service.dart';
 import 'package:secondflutter/views/login_view.dart';
-import 'package:secondflutter/views/notes_view.dart';
+import 'package:secondflutter/views/notes/new_notes_view.dart';
+import 'package:secondflutter/views/notes/notes_view.dart';
 import 'package:secondflutter/views/register_view.dart';
 import 'package:secondflutter/views/verify_email_view.dart';
 import 'dart:developer' as devtools show log;
@@ -21,6 +23,7 @@ void main() {
         regsiterRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
         verifyRoute: (context) => const VerifyEmailView(),
+        newNoteRoute: (context) => const NewNoteView(),
       },
     ),
   );
