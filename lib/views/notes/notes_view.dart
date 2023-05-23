@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:secondflutter/services/auth/auth_service.dart';
+import 'package:secondflutter/services/auth/bloc/auth_bloc.dart';
+import 'package:secondflutter/services/auth/bloc/auth_event.dart';
 import 'package:secondflutter/services/cloud/cloud_note.dart';
 import 'package:secondflutter/services/cloud/firebase_cloud_storage.dart';
 import 'package:secondflutter/utilities/dialogs/logout_dialog.dart';
@@ -43,9 +46,7 @@ class _NotesViewState extends State<NotesView> {
                   case MenuActions.logout:
                     final shouldLogOut = await showLogOutDialog(context);
                     if (shouldLogOut) {
-                      await AuthService.firebase().logOut();
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginRoute, (_) => false);
+                      context.read<AuthBloc>().add(const AuthEventLogOut());
                     }
                 }
               },
@@ -72,7 +73,7 @@ class _NotesViewState extends State<NotesView> {
                     notes: allNotes,
                     oneDeleteNote: (note) async {
                       await _notesService.deleteNote(
-                          documentId: note.documentId); 
+                          documentId: note.documentId);
                     },
                     onTap: (note) {
                       Navigator.of(context)
