@@ -5,6 +5,8 @@ import 'package:secondflutter/services/cloud/cloud_storage_exceptions.dart';
 
 class FirebaseCloudStorage {
   //acces to notes collection in cloud firestire
+
+  //firestore(documents) <-> CloudNote
   final notes = FirebaseFirestore.instance.collection('notes');
 
   Future<void> updateNote(
@@ -34,19 +36,22 @@ class FirebaseCloudStorage {
       return await notes
           .where(ownerUserIdFieldName, isEqualTo: ownewUserId)
           .get()
-          .then((value) => value.docs.map((doc) {
-                return CloudNote(
-                    documentId: doc.id,
-                    ownerUserId: doc.data()[ownerUserIdFieldName] as String,
-                    text: doc.data()[textFieldName] as String);
-              }));
+          .then(
+            (value) => value.docs.map(
+              (doc) => CloudNote.fromSnapshot(doc),
+            ),
+          );
     } catch (e) {
       throw CouldNotGetAllNotes();
     }
   }
 
-  void createNewNote({required String ownewUserId}) async {
-    await notes.add({ownerUserIdFieldName: ownewUserId, textFieldName: ''});
+  Future<CloudNote> createNewNote({required String ownewUserId}) async {
+    final document =
+        await notes.add({ownerUserIdFieldName: ownewUserId, textFieldName: ''});
+    final fetchedNote = await document.get();
+    return CloudNote(
+        documentId: fetchedNote.id, ownerUserId: ownewUserId, text: '');
   }
 
   static final FirebaseCloudStorage _shared =

@@ -1,3 +1,4 @@
+/** 
 import 'dart:async';
 import 'dart:ffi';
 
@@ -328,3 +329,4 @@ const createUserTable = '''CREATE TABLE IF NOT EXISTS "user"
       "email" TEXT NOT NULL UNIQUE,
       PRIMARY KEY("id" AUTOINCREMENT)
       );  ''';
+*/
