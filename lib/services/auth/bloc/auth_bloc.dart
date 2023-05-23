@@ -6,7 +6,7 @@ import 'package:secondflutter/services/auth/bloc/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider) : super(const AuthStateLoading()) {
     on<AuthEventInitialize>(((event, emit) async {
-      provider.initialize();
+      await provider.initialize();
       final user = provider.currentUser;
       if (user == null) {
         emit(const AuthStateLoggedOut(null));
