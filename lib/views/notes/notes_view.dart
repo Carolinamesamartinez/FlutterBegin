@@ -72,7 +72,7 @@ class _NotesViewState extends State<NotesView> {
                     notes: allNotes,
                     oneDeleteNote: (note) async {
                       await _notesService.deleteNote(
-                          documentId: note.documentId);
+                          documentId: note.documentId); 
                     },
                     onTap: (note) {
                       Navigator.of(context)
