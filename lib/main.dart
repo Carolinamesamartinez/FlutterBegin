@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart';
 import 'package:secondflutter/constants/routes.dart';
+import 'package:secondflutter/helpers/loading/loading_screen.dart';
 import 'package:secondflutter/services/auth/auth_service.dart';
 import 'package:secondflutter/services/auth/bloc/auth_bloc.dart';
 import 'package:secondflutter/services/auth/bloc/auth_event.dart';
@@ -43,7 +44,16 @@ class HomePage extends StatelessWidget {
     //we are sending intialize events to out authbloc
     context.read<AuthBloc>().add(const AuthEventInitialize());
     //Blocbuilder
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.isLoading) {
+          LoadingScreen().show(
+              context: context,
+              text: state.loadingText ?? 'please wait a moment');
+        } else {
+          LoadingScreen().hide();
+        }
+      },
       builder: (context, state) {
         if (state is AuthStateLOgin) {
           return const NotesView();

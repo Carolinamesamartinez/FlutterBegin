@@ -21,7 +21,6 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   //iw we use the closedialog this is gonna give a function back
-  CloseDialog? _closeDialogHandle;
 
   @override
   void initState() {
@@ -43,17 +42,6 @@ class _LoginViewState extends State<LoginView> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialod = _closeDialogHandle;
-          //we are not loading now but we are loading before and we close that dialog
-          if (!state.isLoading && closeDialod != null) {
-            closeDialod();
-            _closeDialogHandle = null;
-            //we are loading now and the dialog is not showing  itself , show it
-          } else if (state.isLoading && closeDialod == null) {
-            _closeDialogHandle =
-                showLoadingDialog(context: context, text: 'Loading');
-          }
-
           if (state.excption is UserNotFound) {
             await showErrorDialog(context, 'user not found');
           } else if (state.excption is WrongPassword) {
