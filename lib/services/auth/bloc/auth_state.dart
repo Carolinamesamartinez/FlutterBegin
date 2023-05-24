@@ -41,3 +41,14 @@ class AuthStateRegistering extends AuthState {
   const AuthStateRegistering({required bool isLoading, required this.excption})
       : super(isLoading: isLoading);
 }
+
+class AuthStateorgotPasseord extends AuthState {
+  final Exception? exception;
+  final bool hasSentEmail;
+
+  const AuthStateorgotPasseord(
+      {required this.exception,
+      required this.hasSentEmail,
+      required bool isLoading})
+      : super(isLoading: isLoading);
+}
